@@ -30,7 +30,7 @@ async def start_page():
     return """ This is start page """
 
 
-@app.get("/get_favorites")
+@app.post("/get_favorites")
 async def get_favorites_by_id(data: UserId):
     result = users_coll.find_one({"UserId": data.user_id})
     favorites = []
@@ -68,17 +68,17 @@ async def get_all_museums():
     return museums
 
 
-@app.get("/museums/by_id")
+@app.post("/museums/by_id")
 async def get_museum(data: MuseumId):
-    museum = await museums_collection.find_one({"_id": data.museum_id})
+    museum = museums_collection.find_one({"_id": data.museum_id})
     if museum:
         return museum_helper(museum)
 
 
-@app.get("/favorites")
+@app.post("/favorites")
 async def get_favorites_list(data: UserId):
     fav_list = []
-    fav = await get_favorites_by_id(data.user_id)
+    fav = await get_favorites_by_id(data)
     for museum in museums_collection.find().sort("_id", 1):
         for i in fav:
             if museum["_id"] == i:
